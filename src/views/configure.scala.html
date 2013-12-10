@@ -1,0 +1,372 @@
+@(configForm: Form[Configs], path:String)
+@import helper._
+
+
+@main(title = "Anadroid: a static analyzer for Android malware detection") { 
+	 
+    @helper.form(action = routes.Application.config(path)) {
+    
+		<fieldset>
+              <legend> Configure TAPAS </legend>
+        	@select(
+            	 configForm("k"), 
+           		 options = options(
+                "0" -> "0",
+                "1" -> "1",
+                "2" -> "2"
+            ),
+            '_default -> "--- Choose k value ---",
+            '_label -> "Context-sensitivity K	", 
+            '_showConstraints -> false 
+        	) 
+        
+         	@select(
+           	 	 configForm("gc"), 
+           	 	options = options(
+              	  "true" -> "True",
+             	   "false" -> "False"
+           		 ),
+            '_label -> "Abstract Garbage Collection?	",
+            '_default -> "--- Turn on AGC ---" 
+        	) 
+        	
+        	@select(
+           	 	 configForm("intra"), 
+           	 	options = options(
+           	 	  "false" -> "False",
+              	  "true" -> "True"
+           		 ),
+            '_label -> "Intra-procedural?	",
+            '_default -> "--- Turn on intra-procedural analysis ---" 
+        	) 
+        	
+        	
+         	@select(
+           	 	 configForm("doStateCutOff"), 
+           	 	options = options(
+              	  "true" -> "Yes",
+             	   "false" -> "No"
+           		 ),
+           	 '_id -> "turnOnStateCutOff",
+            '_label -> "Cut off states after number?	",
+            '_default -> "--- Turn on number cutoff ---" 
+        	)  
+         	 
+  			 @inputText(
+           			 configForm("stateCutoff"),
+           			 '_label -> "Cut off states after number?	", 
+           			 '_id -> "stateNO",
+           			 'size -> 15, 
+           			 'value -> 10,
+           			 'placeholder -> 10000,
+           			 '_showConstraints -> false
+        	 )
+        	 
+        	 @select(
+           	 	 configForm("doTimeCutOff"), 
+           	 	options = options(
+              	  "true" -> "Yes",
+             	   "false" -> "No"
+           		 ),
+           	 '_id -> "turnOnTimeCutOff",
+            '_label -> "Cut off states after some time? ",
+            '_default -> "--- Turn on time cutoff ---" 
+        	)  
+         	 
+  			 @select(
+           	 	 configForm("timeCutoff"), 
+           	 	options = options(
+              	  "5" -> "< 5 min",
+             	   "10" -> "< 10 min",
+             	   "20" -> "< 20 min",
+             	   "30" -> "< 30 min",
+             	   "50" -> "< 50 min",
+             	   "90" -> "< 1.5 h",
+             	   "120" -> "< 2 h" 
+           		 ),
+           	 '_id -> "timeCutoff",
+            '_label -> "Cut off states after: "
+        	)  
+			 
+		
+        	
+        	
+        	@select(
+           	 	 configForm("doRegex"), 
+           	 	options = options(
+              	  "true" -> "Yes",
+             	   "false" -> "No"
+           		 ),
+           	 '_id -> "doRegex",
+            '_label -> "Regex to highlight states?	",
+            '_default -> "--- Turn on regex highlighting  ---" 
+        	)  
+        	
+        	@inputText(
+           			 configForm("regex"),
+           			 '_label -> "Regex to highlight state", 
+           			 '_id -> "regexStr",
+           			 '_help-> "Input Regular expression to match states: e.g. .*java/io/.*|android.os/.*|.*startActivity.*", 
+           			 'value -> "", '_error -> configForm.error("regex") ,
+           			 '_showConstraints -> false
+        	 ) 
+        	 
+        	 
+        	 @select(
+           	 	 configForm("dochecklist"), 
+           	 	options = options(
+              	  "true" -> "Yes",
+             	   "false" -> "No"
+           		 ),
+           	 '_id -> "doCheckList",
+            '_label -> "Check list to match states?",
+            '_default -> "--- Turn on checkList highlighting  ---" 
+        	)
+        	
+         
+        	
+        </fieldset>	 
+        
+        <fieldset> 
+        	 
+        	 @checkbox(
+                configForm("pl.fs"), 
+                '_id -> "fs",
+                '_label -> "File System", '_text -> "(file system, reflection, sdcard)",
+                '_showConstraints -> false
+            )
+            
+            
+        	 
+        	 @checkbox(
+                configForm("pl.location"), '_text -> "(GPS location, reflection)",
+                '_id -> "location",
+                '_label -> "Location", 
+                '_showConstraints -> false
+            )
+            
+           
+        	 
+        	 @checkbox(
+                configForm("pl.pic"), '_text -> "(pictures, reflection)",
+                '_id -> "pic",
+                '_label -> "Picture", 
+                '_showConstraints -> false
+            )
+            
+        	 
+        	 
+        	 @checkbox(
+                configForm("pl.deviceid"), 
+                '_id -> "deviceid", '_text -> "( deviceid, serialid,reflection)",
+                '_label -> "IDs", 
+                '_showConstraints -> false
+            )
+            
+           
+        	 
+        	  @checkbox(
+                configForm("pl.network"), 
+                '_id -> "network", '_text -> "(network,reflection)",
+                '_label -> "Network", 
+                '_showConstraints -> false
+            )
+          
+        	 
+        	 
+            
+             @checkbox(
+                configForm("pl.thread"), 
+                '_id -> "thread",
+                '_label -> "Thread", 
+                '_showConstraints -> false
+            )
+            
+            
+        	 
+        	  @checkbox(
+                configForm("pl.ipc"), '_text -> "(intent,reflection)",
+                '_id -> "ipc",
+                '_label -> "IPC", 
+                '_showConstraints -> false
+            )
+            
+            
+        	 
+        	   @checkbox(
+                configForm("pl.contact"), 
+                '_id -> "contact",
+                '_label -> "Contact", 
+                '_showConstraints -> false
+            )
+            
+            
+        	  @checkbox(
+                configForm("pl.sensor"), 
+                '_id -> "sensor",
+                '_label -> "Sensor", 
+                '_showConstraints -> false
+            )
+            
+             
+        	 
+        	   @checkbox(
+                configForm("pl.account"), 
+                '_id -> "account",
+                '_label -> "Account", 
+                '_showConstraints -> false
+            )
+            
+             @checkbox(
+                configForm("pl.media"), '_text -> "(voice, multimedia,reflection)",
+                '_id -> "media",
+                '_label -> "Media", 
+                '_showConstraints -> false
+            )
+            
+             @checkbox(
+                configForm("pl.sms"), 
+                '_id -> "sms",
+                '_label -> "SMS", 
+                '_showConstraints -> false
+            ) 
+         
+        </fieldset>
+       
+
+        <div class="buttons">
+           
+            <input type="submit" id="submit" value="Start Analysis">
+        </div>
+        <div>
+         </br>
+        <p> <b> How to use:</b> </p>
+          <footer>
+          	<ol>
+          	<li> <b>Context sensitivity k</b>: Last k call sites (0 to up to 2); </li>
+          	<li> <b>Abstract garbage collection</b>: Garbage collect unreachable abstract addresses, can boost precision and performance.
+          		 Live register analysis is also turned on when this option is on. It is recommend to turn this option.
+          	</li>
+          	<li>
+          		<b> Intra-procedural? </b>: It is specialized to do intra-procedural analysis in the framework. 
+          		<b>Turning intra-procedural analysis can be really fast but very imprecise!!! (It is actually used for a subproject-Intent fuzzer)</b>
+          		    
+          	</li>
+          	<li> <b>Cut off states after number?</b>: Stop analyzer after some number of explored states. When this option is on, you will need to input a number in the input text field appeared next line; 
+          	</li>
+          	<li> <b>Cut off states after some time?</b>: Stop analyzer after after some minutes or hours. When this option is on, you are required to select the upper bound time limit in the selector appeared in the next line with the default value 5 minutes;</li>
+          	<li> <b>Regex to highlight state?</b>: The regular expression to search the analysis results, matched states will be highlighted in the color number 8:
+          	 
+                   </br> <img src="./assets/images/custom-color.png" alt="Color 8" width="840" height="60">
+                </br> If this option is off, state graph will use default color scheme to color states: 2 for normal states, 4 for tainted states, red for source or sinks states. 
+                </br> <img src="./assets/images/default.png" alt="deafult" width="840" height="60"> 
+          	 </li>
+          	<li><b>Check list to match states?</b>: Similar to regex matching, this is handy to match analysis result with set of specific kinds of categories. 
+          	     A list of checkboxes will be popped following the option. To reduce confusion, it will use the same color scheme as regex matching do (color number 8 in rdpu8) to color matched states. Otherwise, default color scheme will apply;
+          	 </li>    
+          	 <li>
+          	 <b>Start Anadroid: start analysis.</b>
+          	 </li>
+          	</ol>
+                
+                <p> <b> Additional note:</b> </p>
+                If the form is filled incorrectly, errors will be presented in the returning page. 
+                Error message will be in the last line of the page. Contact liangsy&#64;cs&#46;utah&#46;edu for any questions.
+            </footer>
+            </div>
+
+    } 
+	 
+	  <script>
+        $(document).ready(function (){
+        $("#stateNO").hide(); 
+         $("#timeCutoff").hide();
+        $("#regexStr").hide(); 
+         $("#fs").hide();
+ 		$("#location").hide();
+		$("#pic").hide();
+ 		$("#deviceid").hide();
+		$("#network").hide(); 
+ 		 
+		 $("#thread").hide(); 
+		$("#ipc").hide();
+ 		$("#contact").hide();
+		$("#sensor").hide();
+ 		$("#account").hide();
+ 		$("#media").hide();
+ 		$("#sms").hide();
+		 
+         
+         $("#turnOnStateCutOff").change(function() {
+                 
+                if ( $(this).find('option:selected').val() == "true") {
+                    $("#stateNO").show();
+                }else{
+                    $("#stateNO").hide();
+                    $("#stateNO").val( 10)
+                } 
+            });
+            
+            $("#turnOnTimeCutOff").change(function() {
+                 
+                if ( $(this).find('option:selected').val() == "true") {
+                    $("#timeCutoff").show();
+                }else{
+                    $("#timeCutoff").hide(); 
+                } 
+            });
+            
+              $("#doRegex").change(function() { 
+                if ( $(this).find('option:selected').val() == "true") {
+                    $("#regexStr").show();
+                }else{
+                    $("#regexStr").hide();
+                    $("#regexStr").val("");
+                } 
+            });
+            $("#doCheckList").change(function() { 
+                if ( $(this).find('option:selected').val() == "true") {
+                   
+                    $("#fs").show();
+                    $("#location").show();
+                    $("#pic").show();
+                    $("#deviceid").show();
+                    $("#network").show(); 
+        
+ 					 
+					 $("#thread").show(); 
+					$("#ipc").show();
+ 					$("#contact").show();
+					$("#sensor").show();
+ 					$("#account").show();
+ 					$("#media").show();
+ 					$("#sms").show();
+                      
+                    
+                }else{
+                  //  $("#sms").hide(); 
+                    $("#fs").hide(); 
+                     $("#location").hide(); 
+                    $("#pic").hide(); 
+                    $("#deviceid").hide(); 
+                    $("#network").hide(); 
+                    
+                    
+					 $("#thread").hide(); 
+					$("#ipc").hide();
+ 					$("#contact").hide();
+					$("#sensor").hide();
+ 					$("#account").hide();
+ 					$("#media").hide();
+ 					$("#sms").hide();
+                } 
+            }); 
+     
+        });
+        
+      
+    </script>
+ 
+    
+
+}

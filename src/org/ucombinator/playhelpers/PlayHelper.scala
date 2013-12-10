@@ -6,18 +6,17 @@ import org.ucombinator.utils.AnalysisType
 import org.ucombinator.dalvik.informationflow.DalInformationFlow
 import org.ucombinator.dalvik.vmrelated.APISpecs
 import org.ucombinator.dalvik.testdriver.TestScripts
+import play.api.libs.json._
 import java.io.File
 import org.ucombinator.utils.CommonUtils
 import models.PropertyCheckList
 import org.ucombinator.dalvik.preanalysis.RiskAnalysis
 import org.ucombinator.dalvik.parsing.ParserHelper
-import org.ucombinator.dalvik.vmrelated.DalvikVMRelated
 import org.ucombinator.utils.AnalysisScope
-//import org.ucombinator.utils.NonNullCheckUtils
+import org.ucombinator.dalvik.vmrelated.DalvikVMRelated
  
-//import org.ucombinator.dalvik.vmrelated.DalvikVMRelated.InitEntryPointStmt
 
-object PlayHelper extends ParserHelper with DalvikVMRelated {//with NonNullCheckUtils{
+object PlayHelper extends ParserHelper with DalvikVMRelated{
 
  // var gopts: AIOptions = null
   
@@ -81,7 +80,8 @@ object PlayHelper extends ParserHelper with DalvikVMRelated {//with NonNullCheck
      }
   }*/
   
-  private def setPaths(opts:AIOptions) : AIOptions =  { 
+  private def setPaths(opts:AIOptions) : AIOptions =  {
+     
     opts. statsDirName = opts.apkProjDir +  File.separator +  "statistics"
     opts.graphDirName =  opts.apkProjDir +  File.separator +  "graphs"
     opts.permReportsDirName = opts.apkProjDir + File.separator + "reports"
@@ -93,26 +93,15 @@ object PlayHelper extends ParserHelper with DalvikVMRelated {//with NonNullCheck
       opts.permReportPath  = CommonUtils.getReportDumpFolderFileName(opts)
       opts.heatMapReportPath = CommonUtils.getHeatDumpFolderFileName(opts)
       opts.securityReportPath = CommonUtils.getSecurityDumpFolderFileName(opts)
-      opts.riskRankingReportPath = CommonUtils.getRiskRankingFolderFileName(opts)
-      opts.clsRiskRankingReportPath = CommonUtils.getClsRiskRankingFolderFileName(opts)
+         opts.riskRankingReportPath = CommonUtils.getRiskRankingFolderFileName(opts)
+         opts.clsRiskRankingReportPath = CommonUtils.getClsRiskRankingFolderFileName(opts)
       opts.methRiskRankingReportPath= CommonUtils.getMethRiskRankingFolderFileName(opts)
-      opts 
+      opts
+    
   }
     
 
-  /*
-    * that create a background thread to start the analyzer. 
-    * and at the same time, we will returns the possible files 
-  	* links and correspondent message. 
-  	* and this function needs to return a json value.
-  	* 
-  	* 1. k;
-  	* 2. gc;
-  	* 3. statecutoff;
-  	* 4. verbose
-    */
-
-  def doAnalysis(args: Array[String])   {
+ def doAnalysis(args: Array[String])   {
 
     val opts0 = AIOptions.parse(args)
      
@@ -145,7 +134,7 @@ object PlayHelper extends ParserHelper with DalvikVMRelated {//with NonNullCheck
      //parse in s-expressioned dalvik 
     parseDalvikSExprs(opts) 
     
-    println("Parsing done.\n")
+    println("Parsing done.")
     
     if(! opts.doNotNullCheck) {
        // parse in security related files
@@ -211,7 +200,7 @@ object PlayHelper extends ParserHelper with DalvikVMRelated {//with NonNullCheck
      	 runner.runLRAOnAllMethods  
       	} 
       
-      println(" Live register analysis done! \n") 
+      println(" Live register analysis done!") 
       
     }
 
@@ -264,6 +253,7 @@ object PlayHelper extends ParserHelper with DalvikVMRelated {//with NonNullCheck
   }
   
   
+  
   private def setOptsForTest(): AIOptions = {
     val opts = new AIOptions()
 
@@ -278,29 +268,30 @@ object PlayHelper extends ParserHelper with DalvikVMRelated {//with NonNullCheck
   }
 
   def parseAnalystParameters(clientParams: List[String]): Array[String] = {
+      
     val kStr = clientParams(0)
     val gcStr = clientParams(1)
-    val doStateCutoff = clientParams(2)
-    val interruptStNo = clientParams(3)
+    val doIntra =  clientParams(2)
+    val doStateCutoff = clientParams(3)
+    val interruptStNo = clientParams(4)
     
-    val doTimeCutoff = clientParams(4)
-    val timeCutoff = clientParams(5)
+    val doTimeCutoff = clientParams(5)
+    val timeCutoff = clientParams(6)
     
    // val debugStr = clientParams(4)
-    val apkPath = clientParams(6)
+    val apkPath = clientParams(7)
     
-    val doRegex = clientParams(7)
-    val regex = clientParams(8)
+    val doRegex = clientParams(8)
+    val regex = clientParams(9)
     
-    val doCheckList = clientParams(9)
-    //val pl = clientParams(10)
+    val doCheckList = clientParams(10) 
     
-    val fs = clientParams(10)
-    val loc = clientParams(11)
-    val pic = clientParams(12)
-    val device = clientParams(13)
-    val network = clientParams(14)
-    val display = clientParams(15)
+    val fs = clientParams(11)
+    val loc = clientParams(12)
+    val pic = clientParams(13)
+    val device = clientParams(14)
+    val network = clientParams(15)
+   // val display = clientParams(16)
     val thread = clientParams(16)
     val ipc = clientParams(17)
     val contact = clientParams(18)
@@ -308,17 +299,48 @@ object PlayHelper extends ParserHelper with DalvikVMRelated {//with NonNullCheck
     val account = clientParams(20)
     val media = clientParams(21)
     val sms = clientParams(22)
+    
+    // come on! only 22 parameters are allowed!
+//    val doIntra =  clientParams(2)
+//    val doStateCutoff = clientParams(3)
+//    val interruptStNo = clientParams(4)
+//    
+//    val doTimeCutoff = clientParams(5)
+//    val timeCutoff = clientParams(6)
+//    
+//   // val debugStr = clientParams(4)
+//    val apkPath = clientParams(7)
+//    
+//    val doRegex = clientParams(8)
+//    val regex = clientParams(9)
+//    
+//    val doCheckList = clientParams(10) 
+//    
+//    val fs = clientParams(11)
+//    val loc = clientParams(12)
+//    val pic = clientParams(13)
+//    val device = clientParams(14)
+//    val network = clientParams(15)
+//    val display = clientParams(16)
+//    val thread = clientParams(17)
+//    val ipc = clientParams(18)
+//    val contact = clientParams(19)
+//    val sensor = clientParams(20)
+//    val account = clientParams(21)
+//    val media = clientParams(22)
+//    val sms = clientParams(23)
 
+     
     var constrParams = List("--k", kStr)
 
     if (gcStr == "true") {
       constrParams = constrParams ::: List("--gc", "--lra")
     }
-    
-    //default///
-    
-    constrParams = constrParams ::: List("--ppw", "2", "--aco")
 
+     constrParams = constrParams ::: List(  "--aco")
+     constrParams = constrParams ::: List("--godel")
+      
+  
     if (doStateCutoff == "true") {
       val ino = interruptStNo.toInt
       if (ino > 0) {
@@ -338,14 +360,15 @@ object PlayHelper extends ParserHelper with DalvikVMRelated {//with NonNullCheck
       constrParams = constrParams ::: List("--regex", regex) 
     }
     
+//     if(doIntra == "true") {
+//       constrParams = constrParams ::: List("--intraprocedural" )
+//     }
+    
+    constrParams = constrParams ::: List("--dump-graph")
     var plString = "" 
     
-    if(doCheckList == "false") 
-    {
-        constrParams = constrParams ::: List("")
-    }
-    
-    else {
+    if(doCheckList == "true") 
+      {
       
       constrParams = constrParams ::: List("--checklist")
       
@@ -369,9 +392,9 @@ object PlayHelper extends ParserHelper with DalvikVMRelated {//with NonNullCheck
           plString = plString + "|" + "network" + "|" +  "reflection"
       }
       
-      if(display == "true") {
-        plString = plString + "|" + "display" + "|" +  "reflection"
-      }
+//      if(display == "true") {
+//        plString = plString + "|" + "display" + "|" +  "reflection"
+//      }
       
       if(thread == "true"){
         plString = plString + "|" + "thread" + "|" +  "reflection"
@@ -402,18 +425,19 @@ object PlayHelper extends ParserHelper with DalvikVMRelated {//with NonNullCheck
       }
        constrParams = constrParams ::: List(plString)
     }  
-    
+      
     constrParams = constrParams ::: List(apkPath)
 
     val res = constrParams.toArray
-   // println("the result is !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!>>>>>>>>>>>>>>>>>>>>>>>>: ")
-   // constrParams.foreach(println)
+    println("the result is !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!>>>>>>>>>>>>>>>>>>>>>>>>: ")
+    constrParams.foreach(println)
     res
     
   }
 
   def parseParameters(kStrO: Option[Int],
     gcStrO: Option[String],
+    intraStrO: Option[String],
     doStateCutoffO: Option[String],
     stateCutoff: Int,
       doTimeCutoffO: Option[String],
@@ -435,6 +459,11 @@ object PlayHelper extends ParserHelper with DalvikVMRelated {//with NonNullCheck
       case None => ""
     }
     val gcStr = gcStrO match {
+      case Some(str) => { str }
+      case None => ""
+    }
+    
+    val intraStr = intraStrO match {
       case Some(str) => { str }
       case None => ""
     }
@@ -475,10 +504,11 @@ object PlayHelper extends ParserHelper with DalvikVMRelated {//with NonNullCheck
         ""
       }
     }
-    List(kStr, gcStr, doStateCutoff, stateCutoff.toString, doTimeCutoff, timeCutoff.toString,//verboseStr, 
+    List(kStr, gcStr, intraStr, doStateCutoff, stateCutoff.toString, doTimeCutoff, timeCutoff.toString,//verboseStr, 
         path, doRegexStr, regexStr, doCl, 
         pl.filesystem.toString, pl.location.toString, pl.picture.toString, pl.ids.toString, pl.network.toString,
-        pl.display.toString, pl.thread.toString, pl.ipc.toString,pl.contact.toString,
+        //pl.display.toString, 
+        pl.thread.toString, pl.ipc.toString,pl.contact.toString,
         pl.sensor.toString,pl.account.toString,pl.media.toString,pl.sms.toString()
         /*fs:String,
     loc:String,

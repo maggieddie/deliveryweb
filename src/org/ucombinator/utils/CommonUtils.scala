@@ -4,7 +4,7 @@ import scala.util.Random
 import scala.tools.nsc.io.Directory
 import java.io.File
 import org.ucombinator.playhelpers.PlayHelper
-//import play.api.libs.json._
+import play.api.libs.json._
 import org.ucombinator.playhelpers.AnalysisHelperThread
 import models.PropertyCheckList
 
@@ -402,6 +402,7 @@ object CommonUtils {
   // some utils to play
   def getStaticResultLinks(k: Option[Int],
     gcO: Option[String],
+    doIntra: Option[String],
     doStateCutOff: Option[String],
     stateCutoff: Int,
     doTimeCutoff: Option[String],
@@ -418,7 +419,7 @@ object CommonUtils {
        dev:String,
         ntw:String*/) : List[String] = {
     
-     val lstParams = PlayHelper.parseParameters(k, gcO, doStateCutOff, stateCutoff, doTimeCutoff, timeCutoff, filePath,doRegex, regexStr, doCheckList,
+     val lstParams = PlayHelper.parseParameters(k, gcO, doIntra, doStateCutOff, stateCutoff, doTimeCutoff, timeCutoff, filePath,doRegex, regexStr, doCheckList,
          pl)
          //fs,loc,pic,dev,ntw)
      
@@ -442,16 +443,22 @@ object CommonUtils {
     val heatMapReportFilePath = "report-" + arity + "-pdcfa" + gc_lra + "-heat-map" + ".html"
      
     val securityMapFilePath = "report-" + arity + "-pdcfa" + gc_lra + "-security" + ".html"
-    
+       val riskRankingPath = "report-" + arity + "-pdcfa" + gc_lra + "-riskranking" + ".html"
+     val clsRiskRankingPath = "report-" + arity + "-pdcfa" + gc_lra + "-riskranking-classes" + ".html"
+   val methRiskRankingPath = "report-" + arity + "-pdcfa" + gc_lra + "-riskranking-methods" + ".html"
+  
     val svgLink = graphDirName + File.separator + svgfilePath
     val statLink = statsDirName + File.separator + statfilePath
     val permReportPath = reportDirName +  File.separator + permReportFilePath
     val heatMapPath = reportDirName + File.separator + heatMapReportFilePath
     val secuPath = reportDirName + File.separator + securityMapFilePath
-    
-    println("*******" +statfilePath) 
-     println("&&&&&&" + svgLink)
-    List(statLink, permReportPath, secuPath , heatMapPath, svgLink)
+    val rrPath = reportDirName + File.separator + riskRankingPath
+      val rrcPath = reportDirName + File.separator + clsRiskRankingPath
+       val rrmPath = reportDirName + File.separator + methRiskRankingPath
+   
+  
+    List(statLink, permReportPath, secuPath , heatMapPath, svgLink, rrPath, rrcPath, rrmPath)
+     
     
   }
    def addAssetsToPath (str: String) : String = {
@@ -460,8 +467,9 @@ object CommonUtils {
       File.separator + "assets" + File.separator + noPublicSub
     }
    
-  /* def constrJsonResult(k: Option[Int],
+   def constrJsonResult(k: Option[Int],
     gcO: Option[String],
+    doIntra: Option[String],
     doStateCutOff: Option[String],
     stateCutoff: Int,
     doTimeCutoff: Option[String],
@@ -472,40 +480,55 @@ object CommonUtils {
     regexStr: String,
     doCheckList:Option[String],
     pl: PropertyCheckList
-     fs:String,
+    /* fs:String,
      loc:String,
       pic:String,
        dev:String,
-        ntw:String) : JsValue = {
+        ntw:String*/) : JsValue = {
     
-     println("filePath from ::::::::::::::::::", filePath)
-     val resultList = getStaticResultLinks(k, gcO, doStateCutOff, stateCutoff, doTimeCutoff, timeCutoff, filePath, doRegex, regexStr,doCheckList, 
+     println("filePath from :::::--------:::::::::::::", filePath)
+     val resultList = getStaticResultLinks(k, gcO, doIntra, doStateCutOff, stateCutoff, doTimeCutoff, timeCutoff, filePath, doRegex, regexStr,doCheckList, 
          pl)
          //fs,loc,pic,dev,ntw)
     
-     println("%%%%%%%%%%%%%%%%%% result list",resultList)
+     println("%%%%%%%%%%%%%%%%%% result list",resultList.length)
     	 val statsP = addAssetsToPath(resultList(0))
     	   val permReportP = addAssetsToPath(resultList(1))
     	 val securityP =  addAssetsToPath(resultList(2)) 
     	 
     	 val heatMapReport = addAssetsToPath(resultList(3))
     	 val svgP = addAssetsToPath(resultList(4)) 
-    	 
-     
+    	 val riskRankingP = addAssetsToPath(resultList(5)) 
+    	 val clsRiskRankingP = addAssetsToPath(resultList(6)) 
+    	 val methRiskRankingP = addAssetsToPath(resultList(7)) 
     	 println("statics Paths Server: ", statsP)
     	 println("graph Paths Server:", svgP)
-    	  println("perm report Paths Server3453534534:", permReportP)
-     
+    	  println("perm report Paths Sever:", permReportP)
+    	  
+    	  
     	 Json.toJson(
     			 Seq(Json.toJson(
     					 Map("link"->Json.toJson(statsP),  "type" -> Json.toJson("Analysis Statistics")) 
     			 	),
+    			 	
+    			 	Json.toJson(
+    			 			Map("link"->Json.toJson(clsRiskRankingP),  "type" -> Json.toJson(" Risk Ranking - Classes")) 
+    			 	)
+    			 	,
+    			 	Json.toJson(
+    			 			Map("link"->Json.toJson(methRiskRankingP),  "type" -> Json.toJson(" Risk Ranking - Methods")) 
+    			 	)
+    			 	,
+    			 	Json.toJson(
+    			 			Map("link"->Json.toJson(riskRankingP),  "type" -> Json.toJson(" Risk Ranking - Statements")) 
+    			 	)
+    			 	,
     			 	Json.toJson(
     			 			Map("link"->Json.toJson(permReportP),  "type" -> Json.toJson(" Permission Report")) 
     			 	)
     			 	,
     			 	Json.toJson(
-    			 			Map("link"->Json.toJson(securityP),  "type" -> Json.toJson(" Security Report in text")) 
+    			 			Map("link"->Json.toJson(securityP),  "type" -> Json.toJson(" Information flow Report in brief text")) 
     			 	),
     			 	Json.toJson(
     			 			Map("link"->Json.toJson(heatMapReport),  "type" -> Json.toJson(" Heat Map")) 
@@ -516,7 +539,8 @@ object CommonUtils {
     			 )
     		 )
    
-  }*/
+  }
+
    
    def parseProperties(str: String) : Set[String] ={
      val l = str.length()
@@ -534,8 +558,7 @@ object CommonUtils {
    case class HeatPair(cnt : Int) {
      var percentil = 0.0
    }
-   
-  def computeRiskForCates(cates: Set[String]) : Int = {
+   def computeRiskForCates(cates: Set[String]) : Int = {
      val rrm = Thread.currentThread().asInstanceOf[AnalysisHelperThread].riskRankingMap 
        var rankingSum = 0 
        cates.foreach(e => {
@@ -552,6 +575,8 @@ object CommonUtils {
        })
        rankingSum
   }
+   
+  
    
       
    

@@ -18,7 +18,7 @@ class AIOptions {
   var flatPolicy = "m"
   var analysis = "flat"
   var analysisType = AnalysisType.PDCFA
-  var verbose = false
+  var verbose = true
   var dumpStatistics = true
   var simplifyGraph = false
   var dummy = false
@@ -72,13 +72,6 @@ class AIOptions {
     
     var clsRiskRankingReportPath = ""
    var methRiskRankingReportPath = ""
-   var obranches = false
-   var brNum = 0
-   var brCutoff = 0
-   
-   var exception = false
-   
-   var printPaths = false
     
 }
 
@@ -114,9 +107,11 @@ object AIOptions {
          "/usr/bin/python ./getIR.py" + " " + "--nonull" +  " " +  pathToScript + " " + fileName
        }
       
+     println("reacher here stat=r?")
       getIRCmdStr !
-      
+     
       var projFolder = fileFoldnerName 
+       println("reacher here stat=r???????????")
       var  irfolder= fileFoldnerName + File.separator + "dedexout"
       (irfolder, projFolder) 
      
@@ -234,31 +229,11 @@ object AIOptions {
        
        case "--for-intent-fuzzer" :: rest => {
     	   opts.forIntentFuzzer = true
-    	   opts.printPaths = true
     	   parse(rest, opts)
       } 
        
        case  "--intraprocedural" :: rest =>{
          opts.intraprocedural = true
-         opts.obranches = true
-         parse(rest, opts)
-       }
-       
-       case "--obranches" :: cut:: rest => {
-    	  opts.obranches = true
-    	  opts.brCutoff = Integer.parseInt(cut)
-    	 
-         parse(rest, opts)
-       }
-       
-        case "--exceptions" ::  rest => {
-    	  opts.exception = true
-    	//  opts.intraprocedural = false
-         parse(rest, opts)
-       }
-       
-       case "--dump-paths" :: rest =>{
-         opts.printPaths = true
          parse(rest, opts)
        }
      
@@ -294,7 +269,9 @@ object AIOptions {
         opts.interruptAfterTime = Integer.parseInt(v) * 60 *1000
         parse(rest, opts)
       }
-       
+      
+     
+      
       case "--regex" :: str :: rest =>{
         opts.doRegex= true
         opts.regex = str.r
@@ -332,5 +309,6 @@ object AIOptions {
     parse(args.toList, opts)
     opts
   }
+ 
 }
 

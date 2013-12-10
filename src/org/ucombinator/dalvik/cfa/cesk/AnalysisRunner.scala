@@ -215,27 +215,25 @@ abstract class AnalysisRunner(opts: AIOptions) extends FancyOutput
     
     buffer.append("Control states: " + numStates + "\n")
     buffer.append("Transitions / DSG edges: " + numEdges + "\n")
-    buffer.append("Total amount of VarPointsto entries | the mean: " +
+    buffer.append("Total amount of VarPointsto entries, and the mean: " +
       varPointsTo.totalCardi + " | " + Math.ceil(meanRegular) + "\n")
 
-//       val (totalCardi, mean) = Statistics.totalAndMeanThrowPointsTo
-//    buffer.append("Total amount of ThrowPointsto entries | the mean: " +
-//      totalCardi + " | " + mean + "\n")
+       val (totalCardi, mean) = Statistics.totalAndMeanThrowPointsTo
+    buffer.append("Total amount of ThrowPointsto entries, and the mean: " +
+      totalCardi + " | " + mean + "\n")
       
-      buffer.append("Total amount of ThrowPointsto entries, and the mean: " +
-      throwPointsTo.totalCardi + " | " + Math.ceil(meanThrown) + "\n")
+    //  buffer.append("Total amount of ThrowPointsto entries, and the mean: " +
+     // throwPointsTo.totalCardi + " | " + Math.ceil(meanThrown) + "\n")
 
     val (methCardies, meanObjs) = Statistics.totalAndMeanCallObjs
     buffer.append("Total amount of invoking objects, and the mean: " +
-     //  throwPointsTo.totalEntries + " | " + Math.ceil(meanThrown) + "\n"
+      // throwPointsTo.totalEntries + " | " + Math.ceil(meanThrown) + "\n")
       methCardies + " | " + Math.ceil(meanObjs) + "\n")
 
     val (cardiecs, meanec) = Statistics.totalAndAverageEclinks
     buffer.append(" E-C Links: " +
+      // throwPointsTo.totalEntries + " | " + Math.ceil(meanThrown) + "\n")
       cardiecs + " | " + meanec + "\n")
-      
-        buffer.append("reached methods:" +
-      Statistics.reachableMethodCalls +  "\n")
 
     buffer.append("Analysis run for: " + analysisTime + " milliseconds\n")
     if (truncated) {
@@ -254,34 +252,18 @@ abstract class AnalysisRunner(opts: AIOptions) extends FancyOutput
         statDir.createFile(failIfExists = false)
       } 
     
-    
       val path = opts.statsPath //stasticsDir + File.separator + CommonUtils.getStatisticsDumpFileName(opts) // or use opts.statsFilePath
       
       println("the statistics path is: ", path)
         
       val file = new File(path)
-      
-      val lst = path.split("/").toList
-      val apkName = lst(2)
-      val statFileName = lst(lst.length-1)
-      val file2 = new File("./test/" + apkName + "_" + 
-          Thread.currentThread().asInstanceOf[AnalysisHelperThread].gopts.brCutoff + "_" +statFileName )
-      
-      if(!file2.exists()) {
-         file2.createNewFile()
-      }
       if (!file.exists()) {
         file.createNewFile()
       }
       val writer = new FileWriter(file)
 
-      val writer2 = new FileWriter(file2, true)
-      
       writer.write(buffer.toString)
       writer.close()
-      
-      writer2.write(buffer.toString())
-      writer2.close()
 
       println("Statistics dumped into: " + path)
 

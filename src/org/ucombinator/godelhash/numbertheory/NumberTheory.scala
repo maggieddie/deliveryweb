@@ -47,8 +47,6 @@ trait PrimeTable[A] {
 }
 
 
-
-
 /**
  * The primes needs to be put in thread local to ensure thread safe.
  */

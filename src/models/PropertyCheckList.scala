@@ -7,7 +7,7 @@ case class PropertyCheckList (
   picture : Boolean, 
    ids: Boolean, 
   network: Boolean, 
-  display: Boolean,  
+ // display: Boolean,  
   thread: Boolean,
   ipc: Boolean,
   contact: Boolean,

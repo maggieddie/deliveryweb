@@ -180,15 +180,14 @@ trait CESKMachinary extends StateSpace {// with DalvikVMRelated {
    
    
    
-  //def filterAbsObjValues(objs: Set[Value]) : Set[AbstractObjectValue] = {
-   def filterAbsObjValues(objs: D, st: Store) : D = {
+  def filterAbsObjValues(objs: Set[Value]) : Set[AbstractObjectValue] = {
      val vs = 
-      objs.toList filter ((o: Value) => o match {
+      objs filter ((o: Value) => o match {
       case ob@(ObjectValue(_,_)) => true
       case ObjectSomeTop(_) => true // should we need this at all? yes. we need to pass the topObject around.
       case _ => false
     })
-    st.mkDomainD(vs.map(_.asInstanceOf[AbstractObjectValue]): _*) 
+    vs.map(_.asInstanceOf[AbstractObjectValue]) 
   }
   
   def filterObjValues(objs: D, s: Store) : D = {//Set[ObjectValue] = {
@@ -380,7 +379,7 @@ trait CESKMachinary extends StateSpace {// with DalvikVMRelated {
    }
    
    def getTypeAndValForArgs(tyStrs: List[String], argVals: List[D], store:Store) : Set[(String, Set[String])] = {
-     println("getTypeAndValForArgs args: ", tyStrs)
+     println("args: ", tyStrs)
      val argValsList = argVals.map((argVald) => argVald.toList.toSet)
      val typeVals = tyStrs.zip(argValsList)
      typeVals.foldLeft(Set[(String, Set[String])]())((res, vs) => {

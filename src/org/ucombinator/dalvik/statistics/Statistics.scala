@@ -1,7 +1,6 @@
 package org.ucombinator.dalvik.statistics
 import scala.collection.immutable.{ Set => ImmSet, Map => ImmMap}
 import org.ucombinator.dalvik.syntax.StForEqual
-import org.ucombinator.domains.CommonAbstractDomains.Value
 
 object Statistics {
 
@@ -11,7 +10,6 @@ object Statistics {
   
   def recordEC(exnThrownSt: StForEqual, handlerStmt: StForEqual) {
     val oldHandler  = ecTable.getOrElse(exnThrownSt, Set())
-  //  println("RECORDING LINKS: ", exnThrownSt + "  " + (Set(handlerStmt) ++ oldHandler))
     ecTable += (exnThrownSt -> (Set(handlerStmt) ++ oldHandler) )
   }
   
@@ -50,12 +48,6 @@ object Statistics {
   
   //callSite Points to
    var callObjsTbl: ImmMap[StForEqual, Set[String]] = ImmMap()
-   
-   var reachableMethodCalls = 0
-   
-   def countReachableMethodCalls (exnObjNum: List[Value]) {
-     reachableMethodCalls += exnObjNum.length
-   }
   
   def recordCallObjs (throwSt: StForEqual, exnObjNum: List[String]) {
      val oldObjs  = callObjsTbl.getOrElse(throwSt, Set())

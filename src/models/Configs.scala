@@ -3,6 +3,7 @@ package models
 case class Configs(
   k: Option[Int],
   gc: Option[String],
+  intra: Option[String],
   doStateCutOff: Option[String],
   stateCutoff: Int,
   

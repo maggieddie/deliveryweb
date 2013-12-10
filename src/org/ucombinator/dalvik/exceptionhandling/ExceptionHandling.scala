@@ -429,7 +429,7 @@ trait ExceptionHandling extends StateSpace with CESKMachinary with StmtForEqual 
     //  println(" gonna catch the type: ", exnType)
    handlerType match {
              case "finally" => {
-                 println("in the finally handle, the exception Type: ", exnType)
+                 //("in the finally handle, the exception Type: ", exnType)
                val finallyHandlerStmtO = Stmt.forLabel(lbl)
                finallyHandlerStmtO match {
                  case Some(st) => {
@@ -456,7 +456,9 @@ trait ExceptionHandling extends StateSpace with CESKMachinary with StmtForEqual 
                    handlerStO match {
                    case Some(st) => {
                       val realN = CommonUtils.findNextStmtNotLineOrLabel(st)
+                      
                       Statistics.recordEC(buildStForEqual(ijt),buildStForEqual(realN ) )
+                      
                       val newStore = storeUpdate(s, List((fp.offset("exn"), exnValue)))
                       Set((PartialState(buildStForEqual(realN ), fp, newStore, pst, kptr, tp), k))
                    }

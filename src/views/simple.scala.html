@@ -1,0 +1,160 @@
+@(svgPath:  JsValue)
+
+@import play.api.libs.json._  
+
+@main("Analysis result:") {  
+    
+	<ul   id="resultList"></ul>
+	
+ 
+	
+    
+	<script id="resultTemplate" type="text/x-jquery-tmpl"> 
+  	    <p><li> 
+  			{{if  $item.checkLink("link") == 1}}
+  			  {{if link.indexOf(".svg") !== -1  }}
+  			  	{{if window.myRet == 1}}
+  					 <h2> <a href = ${link}  target="_blank"><b>${type}</b> </a> </h2>
+  				 		<ul>
+  				 		<li> 
+  				 			  <a href = ${buildTarGraphPath(link)} target="_blank">
+  				 			    <b><font size="4" color="red"> Download svg graph package </font> (svg file + embedded html file)  
+  				 			    </b> 
+  				 			  </a> 
+  				 		</li>
+  				 		<li>
+  				 		
+  				 		      <a href = ${buildTarAllPath(link)} target="_blank">
+  				 			    <b><font size="6" color="red"> ALL analysis results available! </font>
+  				 			    </b> 
+  				 			  </a> 
+  				 		</li>
+  				 		
+  				 		</ul>
+  				
+  				 {{else}}
+  				 	<h2> <a href =  ${buildTarGraphPath(link)} target="_blank"><b> Download Dot graph package  for now (use "dot -Tsvg somefile.dot -o somefile.svg" offline) </b>
+  				 	<p> <b><font size="4" color="red">  Svg state graph download link will be available shortly too!! </font> </b></p>
+  				 	 </a> </h2>
+  				 		
+  				 
+  				 {{/if}}
+  			   {{/if}}
+  			    {{if  link.indexOf(".txt") !== -1 ||  link.indexOf(".html") !== -1 }}
+  	  	 			<h2> <a href = ${link}  target="_blank"><b>${type}</b> </a> </h2>
+   	 			{{/if}}
+  			{{else}}
+    		<b>${type} </b> 
+    		
+    		<p> You can try the following links manually if no links shown after time bound you set for the analyzer </p>
+    		 <ul > 
+				<li>
+				  All results: <em>homepage.e.g. http://pegasus.cs.utah.edu:9090</em>${buildTarAllPath(link)} (this can not be available due to the graph file generation)  </b>  
+				</li>
+				<li>
+				 Text reports:  <em>homepage.e.g. http://pegasus.cs.utah.edu:9090</em>${buildTarReportPath(link)} (all files except graphs)
+				</li>
+			</ul>
+				
+  			{{/if}} 
+  		</li> </p>
+  		
+	</script>
+	
+	
+	 
+	<script type="text/javascript"> 
+   	     var results = JSON.parse('@svgPath'.replace(/&quot;/g,'"'));    
+
+   		 function getDotLink(svgLink) {
+   		 	var svgL = svgLink.length;
+   		 	var svgPathIndex = svgL - 3;
+   		 	var dotPath = svgLink.substring(0,svgPathIndex) +"dot";
+   		 	return dotPath;
+   		 }
+   		 
+   		 function buildTarGraphPath(svgPath) {
+   			var l1 = svgPath.split("/");
+   			var l1len = l1.length;
+   			var l2 = l1.slice(0, l1len-1);
+   			var l3 = l2.map(function(e) {return e+"/";});
+   			var res = "";
+   			l3.forEach(function(e) {return res = res + e});
+   			 
+   				return res + "graph.tar.gz";}
+   				
+   		function buildTarAllPath(svgPath) {
+   			var l1 = svgPath.split("/");
+   			var l1len = l1.length;
+   			var l2 = l1.slice(0, l1len-2);
+   			var l3 = l2.map(function(e) {return e+"/";});
+   			var res = "";
+   			l3.forEach(function(e) {return res = res + e});
+   			 
+   				return res + "all.tar.gz";}	
+   				
+   		 function buildTarReportPath(svgPath) {
+   			var l1 = svgPath.split("/");
+   			var l1len = l1.length;
+   			var l2 = l1.slice(0, l1len-2);
+   			var l3 = l2.map(function(e) {return e+"/";});
+   			var res = "";
+   			l3.forEach(function(e) {return res = res + e});
+   			 
+   				return res + "reports/" + "reports.tar.gz";}	
+   			 
+   		 
+     	 setInterval("refreshPage();", 2000);  
+     
+      function refreshPage() {
+         	$('ul').empty();
+   	      	$("#resultTemplate").tmpl(results, {
+    			checkLink : function(key) {
+     			 var linkRes = this.data[key]; 
+     			 var dotLinkRes = linkRes.replace(".svg", ".dot")
+     			 ajaxCheckFile(linkRes, callbackFunc);  
+     			 ajaxCheckFile(dotLinkRes, callbackFuncDot);  
+     		 	return window.myRet || window.myRetDot;
+   				 }
+			}).appendTo("#resultList" );  
+ 	         }
+ 	         
+ 	         
+	</script> 
+  
+  <div>
+  </br>
+  </br>
+  <footer>
+  <p> 
+  <b>Note</b>
+  </p>
+  
+  <ol>
+  <li> 
+  Analysis takes some moments, results will be presented in the page shortly. <b><em><font size="3" color="red"> Don't close this window! </font> </em></b> 
+  </li>
+  <li>
+  
+  There are five result links will be presented to you. Clicking result will bring you to a new tab or a window according to your browser settings.
+  (<b><em><font size="2" color="red"> In case there are no links shown, you can manually try static links for reports or whole analysis package are presented to you any time. </font> </em>)
+  <ol>
+  	<li><b>Analysis Statistics:</b> Analysis runtime, and values for precision metrics (points-to, exceptions)</li>
+    <li><b>Permission Report:</b> It shows the permissions that the app has requested, the permissions that the app has reached, and discrepancy between the two sets. </li>
+  	<li><b>Security Report in text:</b> It shows suspicious lines of code, in the format of <em>"bytecode-statement&#64;&#64;&#64;class-name&#36;&#36;method-name&#58;&#58;&#58;line-number"</em>, entry points, and security categories. </li>
+  	<li><b>Heat Map:</b> Rough report for profiling the analysis </li>
+  	<li><b>Analysis State Graph:</b> It virtualizes  abstract execution of pushdown-based model for Dalvik bytode. 
+  	There are two kinds of graph links provided: SVG and Dot graph. DOT format is the raw graph generated by analysis, it is then converted to SVG graph.
+  	SVG format graph can show you the flows of sensitive data by coloring related state nodes, it also allows you to  inspect details of any state by clicking the state node. 
+  	 But in case it takes long to generate, you can always download the dot graph file and do the convertion offline by adding the homepage link before the the relative path presented, e.g. <em>/assets/apks/SysMon596173159/SysMon/graphs/graph-1-pdcfa-gc-lra.dot</em>
+     </li>
+    
+  </ol>
+  </li>
+  
+ 
+  </ol>
+  </footer>
+  </div>
+  
+}

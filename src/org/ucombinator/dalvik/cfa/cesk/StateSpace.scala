@@ -443,6 +443,7 @@ trait StateSpace  {
     def weakerThanAny(  seenStates: Set[ControlState], subsumption: Boolean) : Boolean = {
       val res = seenStates.filter(ss => {
         this.weakerThan(ss, subsumption)
+        
       })
       ! res.isEmpty
     }
@@ -635,17 +636,13 @@ trait StateSpace  {
       }
     } 
     }
-  
-     var intentRelatedInfo: Map[(String, String, Stmt), Map[String, Set[IntentExtraKeyTypeAndValue]]] = Map.empty
   }
  
   
  
  // case class PartialState(st: Stmt, fp: FramePointer, s: Store, kptr: KAddr, t:Time) extends ControlState
   case class PartialState(st: StForEqual, fp: FramePointer, s: Store, ps: Store, kptr: KAddr, t:Time) extends ControlState {
-  
-    
-    override  def toString ={
+   override  def toString ={
       
       "Statement: " + st.oldStyleSt + "\n" + "fp: "+ fp.toString + "\n" +  "store: " + s
     } 

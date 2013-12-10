@@ -76,12 +76,16 @@ ExceptionHandling{
     val regularStates = filterRegisterStates(states)
     val thrownStates = filterThrownStates(states)
     
+    //println("thrown states: ", thrownStates.toList.length)
+    
     val regularMonoStore = getMonovariantStore(regularStates, dymmyStoreforType)
     val throwMonStore = getMonovariantStore(thrownStates, dymmyStoreforType)
     
     val (totalReguEntries, totalReguCardi) = getPointsToElemPair(regularMonoStore)
     val (totalThrownEntries,  totalThrownCardi) = getPointsToElemPair(throwMonStore)
    
+    //println(totalReguEntries) 
+    //println(totalReguCardi)
     (VarPointsTo(totalReguEntries, totalReguCardi), 
      ThrowPointsTo(totalThrownEntries, totalThrownCardi))
   }

@@ -491,7 +491,6 @@ class PDCFAAnalysisRunner(opts: AIOptions) extends DalvikCFARunner(opts)
 
   }
 
- 
   def dumpForIntentInput(opts: AIOptions): String = {
     import java.io._
 
@@ -512,6 +511,7 @@ class PDCFAAnalysisRunner(opts: AIOptions) extends DalvikCFARunner(opts)
 
     Thread.currentThread().asInstanceOf[AnalysisHelperThread].receivingIntentProcessingMap.foreach {
       case (newKey, fieldMap) => {
+
         if (!fieldMap.isEmpty) {
           buffer.append("Method: ", newKey)
           buffer.append("\n")
@@ -985,40 +985,38 @@ class PDCFAAnalysisRunner(opts: AIOptions) extends DalvikCFARunner(opts)
           })
         }
       }
-     val secondTime = (new java.util.Date()).getTime
-    val delta = secondTime - firstTime
 
     if (opts.doNotNullCheck) {
       dumpNonNullStatistic(opts, nonNullMap, avgNonNullMap)
     }
 
     if (opts.forIntentFuzzer) {
-    //  dumpForIntentInput(opts)
-       val path = getGraphParentFolder(opts)
-      dumpPathsWithIntentsRelated(opts, dsgs)
+      dumpForIntentInput(opts)
      // dumpDataFlowForFuzzer(opts,dsgs)
     }
 
-    if (opts.verbose) {
-       println()
+    val secondTime = (new java.util.Date()).getTime
+    val delta = secondTime - firstTime
+
+    println()
     println("The analysis has taken " + (
       if (delta / 1000 < 1) "less than one second."
       else if (delta / 1000 == 1) "1 second."
       else delta / 1000 + " seconds."))
-      println("Pushdown analysis finished.")
+
+    if (opts.verbose) {
+      println()
+      println("Dyck State Graph computed.")
     }
 
     if (!opts.forIntentFuzzer && !opts.doNotNullCheck) {
+      dumpDataFlowForFuzzer(opts,dsgs)
       dumpSecurityReport(opts, dsgs)
     }
 
-    if (opts.printPaths) {
-      val path = getGraphParentFolder(opts)
-      dumpSimplePaths(opts, dsgs)
-      println()
-    }
+    // dumpRiskRanking(opts, dsgs)
 
-    if (opts.dumpGraph) {
+    if (  opts.dumpGraph) {
       val path = getGraphParentFolder(opts)
 
       val res = prettyPrintDSGs(dsgs, path, opts)
