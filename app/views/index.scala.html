@@ -1,0 +1,31 @@
+@(helloForm: Form[(String,Int,Option[String])])
+
+@import helper._
+
+@main(title = "Anadroid: a static analyzer for Android malware detection") {
+
+    <h3> Upload an apk file :</h3>
+
+	@form(action = routes.Application.uploadFile, 'enctype -> "multipart/form-data") {
+    
+    <input type="file" name="apkfile">
+    
+    <p class="button">
+        <input type="submit" value="Submit">
+    </p>
+    
+    </br>
+    </br>
+    
+    <footer>
+    <ul>
+    <li> Google Chrome is recommended, version 26.0.1410.43. (it is our testing environment),  Safari works, you can try Firefox. </li>
+    <li> <p> Please enable Javascript to use Anadroid. </p> </li>
+    
+    </ul>
+    
+    </footer>
+}
+    
+
+}
